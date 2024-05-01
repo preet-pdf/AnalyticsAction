@@ -18,6 +18,17 @@ document.getElementById("button2").addEventListener("click", function() {
     sendAuditEvent("button_clicked2", "Button 2");
 });
 
+document.getElementById("invalid_button").addEventListener("click", function() {
+    sendAuditEvent("invalid_button", "Button 2");
+});
+
+document.getElementById("buttonContainer").addEventListener("dblclick", function(event) {
+    if (event.target.tagName === 'BUTTON') {
+        sendAuditEvent("button_double_clicked", event.target.textContent);
+    }
+});
+
+
 function sendAuditEvent(eventType, eventData) {
     var isoDateString = new Date().toISOString();
     console.log(isoDateString);
