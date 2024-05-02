@@ -18,9 +18,16 @@ public class WebAudit {
     @PostMapping("/")
     public void getAuditEventDetails(@RequestBody AuditEvent auditEvent) throws JsonProcessingException {
 
-        if (Objects.equals(auditEvent.getEventType(), "dropdown1_clicked") || Objects.equals(auditEvent.getEventType(), "dropdown2_clicked") ) {
+        if (Objects.equals(auditEvent.getEventType(), "dropdown1_clicked")
+                || Objects.equals(auditEvent.getEventType(), "dropdown2_clicked")
+        ) {
             auditEvent.setAuditEvent(AuditEvents.DROPDOWN);
-        } else if (Objects.equals(auditEvent.getEventType(), "button_clicked1") || Objects.equals(auditEvent.getEventType(), "button_clicked2")) {
+        } else if (
+                Objects.equals(auditEvent.getEventType(), "button_clicked1")
+                        || Objects.equals(auditEvent.getEventType(), "button_clicked2")
+                        || Objects.equals(auditEvent.getEventType(), "invalid_button")
+                        || Objects.equals(auditEvent.getEventType(), "button_double_clicked")
+        ) {
             auditEvent.setAuditEvent(AuditEvents.BUTTON);
         } else if (Objects.equals(auditEvent.getEventType(), "input_data_entered")) {
             auditEvent.setAuditEvent(AuditEvents.INPUT);
