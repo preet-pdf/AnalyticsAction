@@ -55,7 +55,7 @@ function displayTimeSpent() {
         const minutes = Math.floor(seconds / 60);
         const remainingSeconds = seconds % 60;
         console.log(`You spent ${minutes} minutes and ${remainingSeconds} seconds on this page.`);
-        sendAuditEvent("spent_time", remainingSeconds);
+        sendAuditEvent("spent_time", minutes);
     } else {
         console.log('No start time found.');
     }
