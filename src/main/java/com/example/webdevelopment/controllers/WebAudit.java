@@ -1,19 +1,28 @@
 package com.example.webdevelopment.controllers;
 
+import com.example.webdevelopment.DTO.AlertDTO;
 import com.example.webdevelopment.DTO.AuditEvent;
 import com.example.webdevelopment.DTO.AuditEvents;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @RestController
 @RequestMapping("/audit")
 @CrossOrigin
 public class WebAudit {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(WebAudit.class);
+
 
     @PostMapping("/")
     public void getAuditEventDetails(@RequestBody AuditEvent auditEvent) throws JsonProcessingException {
@@ -47,10 +56,22 @@ public class WebAudit {
     @Autowired
     private KafkaTemplate<Object, String> kafkaTemplate;
 
+    private static List<AlertDTO> alertDTOList = new ArrayList<>();
+
     public void sendAuditEvent(AuditEvent auditEvent) throws JsonProcessingException {
         String auditEventJson = objectMapper.writeValueAsString(auditEvent);
         kafkaTemplate.send("audit_event", auditEventJson);
     }
 
+    @KafkaListener(topics = "alert", groupId = "alert")
+    public void auditConsumer(String alert) throws JsonProcessingException {
+        AlertDTO alertDTO = objectMapper.readValue(alert, AlertDTO.class);
+        alertDTOList.add(alertDTO);
+    }
+
+    @GetMapping
+    public List<AlertDTO> getAlertDTOList() {
+        return alertDTOList;
+    }
 
 }
