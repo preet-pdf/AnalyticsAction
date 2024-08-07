@@ -26,19 +26,16 @@ public class WebAudit {
 
     @PostMapping("/")
     public void getAuditEventDetails(@RequestBody AuditEvent auditEvent) throws JsonProcessingException {
-
-        if (Objects.equals(auditEvent.getEventType(), "dropdown1_clicked")
+        System.out.println(auditEvent);
+        if (Objects.equals(auditEvent.getEventType(), "dropdown_toggle")
                 || Objects.equals(auditEvent.getEventType(), "dropdown2_clicked")
         ) {
             auditEvent.setAuditEvent(AuditEvents.DROPDOWN);
         } else if (
-                Objects.equals(auditEvent.getEventType(), "button_clicked1")
-                        || Objects.equals(auditEvent.getEventType(), "button_clicked2")
-                        || Objects.equals(auditEvent.getEventType(), "invalid_button")
-                        || Objects.equals(auditEvent.getEventType(), "button_double_clicked")
+                auditEvent.getEventType().contains("button")
         ) {
             auditEvent.setAuditEvent(AuditEvents.BUTTON);
-        } else if (Objects.equals(auditEvent.getEventType(), "input_data_entered")) {
+        } else if (auditEvent.getEventType().contains("input")) {
             auditEvent.setAuditEvent(AuditEvents.INPUT);
         } else if (Objects.equals(auditEvent.getEventType(), "spent_time")) {
             auditEvent.setAuditEvent(AuditEvents.SESSION);
@@ -66,6 +63,7 @@ public class WebAudit {
     @KafkaListener(topics = "alert", groupId = "alert")
     public void auditConsumer(String alert) throws JsonProcessingException {
         AlertDTO alertDTO = objectMapper.readValue(alert, AlertDTO.class);
+        System.out.println(alertDTO);
         alertDTOList.add(alertDTO);
     }
 
@@ -73,5 +71,4 @@ public class WebAudit {
     public List<AlertDTO> getAlertDTOList() {
         return alertDTOList;
     }
-
 }
